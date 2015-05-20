@@ -3,26 +3,32 @@
 
 /** Example rules used by the template application (remove for your app) */
 body {
-	background-color: red;
-	color: black;	
+	color: red;	
 }
 
 h1 {
   font-size: 2em;
   font-weight: bold;
-  color: black;
+  color: red;
   margin: 40px 0px 70px;
   text-align: center;
+}
+
+div
+{
+	font-weight: bold;
+	color: red;
 }
 
 .sendButton {
   display: block;
   font-size: 16pt;
+  align: center;
 }
 
 /** Most GWT widgets already have a style name defined */
 .gwt-RootPanel{
-	background-color: red
+	/** background-color: maroon */
 }
 .gwt-DialogBox {
   width: 400px;

@@ -1,5 +1,6 @@
 package com.SM.ISP.shared;
 import javax.swing.text.*;
+
 import java.util.*;
 
 /**
@@ -8,16 +9,18 @@ import java.util.*;
  * This class simulates an ISP entry in the database.
  */
 
-public class ISP
+public class ISP //implements Comparable<ISP>
 {
 	protected static final ArrayList<String> topics = new ArrayList<String>();
+	
 	private int ID;
 	private String sf, sl, ct, cf, cl, o1, o2, oA, oC, oS, oZ, an, ce, cp, a, r;
 	private String t;
+	private String y;
 	
 	/**
 	 * Constructor for ISP object
-	 * @param id the ID number of the ISP (joint ISPs have the same number)
+	 * @param id the ID number of the ISP
 	 * @param topic the topic of the ISP
 	 * @param studentFirst the first name of the student
 	 * @param studentLast the last name of the student
@@ -36,7 +39,7 @@ public class ISP
 	 * @param abstraction the abstract written by the student
 	 * @param reflection the reflection written by the student
 	 */
-	public ISP(int id, String topic, String studentFirst, String studentLast, 
+	public ISP(int id, String year, String topic, String studentFirst, String studentLast, 
 			String contactTitle, String contactFirst, String contactLast, 
 			String orgLine1, String orgLine2, 
 			String orgAddress, String orgCity, String orgState, String orgZip,
@@ -44,6 +47,7 @@ public class ISP
 			String abstraction, String reflection)
 	{
 		ID = id;
+		y = year;
 		t = topic;
 		sf = studentFirst;
 		sl = studentLast;
@@ -102,6 +106,20 @@ public class ISP
 	 */
 	public void setID(int ID) {
 		this.ID = ID;
+	}
+
+	/**
+	 * @return the y
+	 */
+	public String getYear() {
+		return y;
+	}
+
+	/**
+	 * @param y the y to set
+	 */
+	public void setYear(String y) {
+		this.y = y;
 	}
 
 	/**

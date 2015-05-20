@@ -30,7 +30,8 @@ public class FieldVerifier {
 	 */
 	public static boolean isValidLogin(String name, String pass) 
 	{
-		if (name == null || pass == null) {
+		if (name == null || pass == null || name.length() <= 0 || pass.length() <= 0)
+		{
 			return false;
 		}
 		return true;
