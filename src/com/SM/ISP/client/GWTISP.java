@@ -3,6 +3,7 @@ package com.SM.ISP.client;
 import com.SM.ISP.server.ISPDB;
 import com.SM.ISP.shared.FieldVerifier;
 import com.SM.ISP.shared.ISP;
+import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -10,6 +11,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -20,6 +22,30 @@ import com.google.gwt.user.client.ui.*;
  */
 public class GWTISP implements EntryPoint 
 {
+	/**
+	 * @author mannymengs
+	 * This class represents an ISP cell in the cell list of projects
+	 */
+	public static class ISPCell extends AbstractCell<ISP> 
+	{
+		private String name;
+		private String _topic;
+		public ISPCell(ISP p)
+		{
+			super();
+			name = p.getSf() + " " + p.getSl();
+			_topic = p.getT();
+		}
+		
+		/**
+		 * 
+		 */
+		public void render(com.google.gwt.cell.client.Cell.Context context, ISP value, SafeHtmlBuilder sb) 
+		{
+			// TODO Auto-generated method stub
+		}
+	}
+
 	private static final String directions = "Click on a project in the left panel to open it in this display.";
 	private static final int bw = 2;
 	private static final String header = "Roxbury Latin Independent Senior Project Database";
@@ -49,10 +75,9 @@ public class GWTISP implements EntryPoint
 	private Button edit = new Button("Edit");
 
 	//Create cell list for project list panel
-	private TextCell pName = new TextCell();
-	private CellList<String> pList = new CellList<String>(pName);
+	private CellList<ISP> pList;
 
-	//private ISPDB db = new ISPDB();
+	private ISPDB db;
 	
 	TextArea details = new TextArea();//Create text area for details
 
@@ -61,13 +86,15 @@ public class GWTISP implements EntryPoint
 	 */
 	public void onModuleLoad() 
 	{
+		if(!loggedIn) login();
+		/*
 		Window.enableScrolling(false);
 		if(loggedIn)
 		{
 			RootPanel.get("errorLabelContainer").add(new Label("Must be on Roxbury Latin campus and connected to school wifi"));
 			return;
 		}
-		
+		db = new ISPDB();
 		setup();
 		size();
 		home();
@@ -84,9 +111,10 @@ public class GWTISP implements EntryPoint
 			public void onClick(ClickEvent event)
 			{
 				String searchText = searchField.getText();
-				//db.search(searchText);
+				db.search(searchText);
 			}
 		});
+		*/
 	}
 
 	public void setup()
@@ -191,10 +219,14 @@ public class GWTISP implements EntryPoint
 		details.setSize(display.getOffsetWidth() + "px", display.getOffsetHeight() + "px");
 		display.add(details);
 		details.setText("An east weds underneath the heel. The graffito boosts a harmless spirit. The bull quota flies around a genuine ham. The bow rocket sweeps in the movie. The award relaxes over a pending individual.");
+	
+		//fill cell list with 
 	}
 
 	public boolean login()
 	{
+		String instructions = "Login in with @roxburylatin.org credentials to access the Roxbury Latin ISP Database";
+		final Label instruction = new Label(instructions);
 		final Button loginButton = new Button("Login");
 		final TextBox usernameField = new TextBox();
 		usernameField.getElement().setPropertyString("placeholder", "username");
@@ -212,6 +244,7 @@ public class GWTISP implements EntryPoint
 		// Add the nameField and sendButton to the RootPanel
 		// Use RootPanel.get() to get the entire body element
 		RootPanel.get().addStyleName("gwt-RootPanel");
+		RootPanel.get("instructionContainer").add(instruction);
 		RootPanel.get("usernameFieldContainer").add(usernameField);
 		RootPanel.get("passwordFieldContainer").add(passwordField);
 		RootPanel.get("sendButtonContainer").add(loginButton);

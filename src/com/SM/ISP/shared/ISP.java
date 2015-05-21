@@ -20,7 +20,8 @@ public class ISP //implements Comparable<ISP>
 	
 	/**
 	 * Constructor for ISP object
-	 * @param id the ID number of the ISP
+	 * @param id the ID number of the ISP (use of this data is tbd by future administrator)
+	 * @param year the graduation year of the student (to be added into the database table)
 	 * @param topic the topic of the ISP
 	 * @param studentFirst the first name of the student
 	 * @param studentLast the last name of the student
@@ -95,6 +96,7 @@ public class ISP //implements Comparable<ISP>
 	}
 
 	/**
+	 * This method returns the ID number of the ISP
 	 * @return the ID
 	 */
 	public int getID() {
@@ -102,6 +104,7 @@ public class ISP //implements Comparable<ISP>
 	}
 
 	/**
+	 * This method sets the ID number of the ISP
 	 * @param ID the ID to set
 	 */
 	public void setID(int ID) {
@@ -109,6 +112,7 @@ public class ISP //implements Comparable<ISP>
 	}
 
 	/**
+	 * This method returns the graduation year of the student who did the ISP
 	 * @return the y
 	 */
 	public String getYear() {
@@ -116,6 +120,7 @@ public class ISP //implements Comparable<ISP>
 	}
 
 	/**
+	 * This method sets the year of the ISP
 	 * @param y the y to set
 	 */
 	public void setYear(String y) {
@@ -123,6 +128,7 @@ public class ISP //implements Comparable<ISP>
 	}
 
 	/**
+	 * This method returns the student's first name
 	 * @return the sf
 	 */
 	public String getSf() {
@@ -130,6 +136,7 @@ public class ISP //implements Comparable<ISP>
 	}
 
 	/**
+	 * This method sets the students first name
 	 * @param sf the sf to set
 	 */
 	public void setSf(String sf) {
