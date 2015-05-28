@@ -137,7 +137,6 @@ public class ISPDB extends RemoteServiceServlet implements DBConnection
 						rs.getString("org_city"), rs.getString("org_state"), rs.getString("org_zip"), 
 						rs.getString("advisor_name"), rs.getString("contact_email"), rs.getString("contact_phone"), 
 						rs.getString("abstract"), rs.getString("reflection")));
-				System.out.println(db.get(db.size() - 1).getSf() + "added");
 			}	
 			return true;
 		}
@@ -202,11 +201,6 @@ public class ISPDB extends RemoteServiceServlet implements DBConnection
 		for(int i = 0; i < firstLast.size(); i++)
 		{
 			byFirst.add(db.get(names.indexOf(firstLast.get(i))));
-		}
-		
-		for(ISP p : byFirst)
-		{
-			//System.out.println(p.getSf());
 		}
 		db = byFirst;
 		return db;

@@ -17,9 +17,11 @@ public class ISP implements IsSerializable, Serializable //implements Comparable
 	private String sf, sl, ct, cf, cl, o1, o2, oA, oC, oS, oZ, an, ce, cp, a, r;
 	private String t;
 	private String y;
+	private static int nextKey = 0;
+	private final int key;
 	
 	//required for RPC
-	public ISP(){}
+	public ISP(){nextKey++; key = nextKey;}
 	
 	/**
 	 * Constructor for ISP object
@@ -74,6 +76,20 @@ public class ISP implements IsSerializable, Serializable //implements Comparable
 			topics.add(t);
 			Collections.sort(topics);
 		}
+		nextKey++;
+		this.key = nextKey;
+	}
+	
+	public ISP(String string) 
+	{
+		sf = string;
+		nextKey++;
+		key = nextKey;
+	}
+
+	public int getKey()
+	{
+		return key;
 	}
 	
 	/**
