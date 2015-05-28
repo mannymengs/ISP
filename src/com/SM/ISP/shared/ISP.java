@@ -1,15 +1,15 @@
 package com.SM.ISP.shared;
-import javax.swing.text.*;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
- * 
  * @author mannymengs
  * This class simulates an ISP entry in the database.
  */
 
-public class ISP //implements Comparable<ISP>
+public class ISP implements IsSerializable, Serializable //implements Comparable<ISP>
 {
 	protected static final ArrayList<String> topics = new ArrayList<String>();
 	
@@ -17,6 +17,9 @@ public class ISP //implements Comparable<ISP>
 	private String sf, sl, ct, cf, cl, o1, o2, oA, oC, oS, oZ, an, ce, cp, a, r;
 	private String t;
 	private String y;
+	
+	//required for RPC
+	public ISP(){}
 	
 	/**
 	 * Constructor for ISP object

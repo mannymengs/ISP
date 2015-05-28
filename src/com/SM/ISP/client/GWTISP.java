@@ -1,6 +1,7 @@
 package com.SM.ISP.client;
 
-import com.SM.ISP.server.ISPDB;
+import java.util.ArrayList;
+
 import com.SM.ISP.shared.FieldVerifier;
 import com.SM.ISP.shared.ISP;
 import com.google.gwt.cell.client.AbstractCell;
@@ -15,6 +16,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.*;
 
 /**
@@ -22,6 +24,36 @@ import com.google.gwt.user.client.ui.*;
  */
 public class GWTISP implements EntryPoint 
 {
+	private DBConnectionAsync rpc;
+	
+	public GWTISP()
+	{
+		 rpc = (DBConnectionAsync) GWT.create(DBConnection.class);
+		 ServiceDefTarget target = (ServiceDefTarget) rpc;
+		 String moduleRelativeURL = GWT.getModuleBaseURL() + "db";
+		 target.setServiceEntryPoint(moduleRelativeURL);
+	}
+	
+	private class RPCHandler<T> implements AsyncCallback<ArrayList<ISP>> 
+	{
+		 public void onFailure(Throwable ex) 
+		 {
+			 ex.printStackTrace();
+		 }
+		 public void onSuccess(ArrayList<ISP> result) 
+		 {
+			 db = result;
+		 }
+	}
+	
+	private class HomeHandler implements ClickHandler 
+	{
+		public void onClick(ClickEvent event) 
+		{
+			loadDatabase();
+		}
+	}
+
 	/**
 	 * @author mannymengs
 	 * This class represents an ISP cell in the cell list of projects
@@ -36,22 +68,26 @@ public class GWTISP implements EntryPoint
 			name = p.getSf() + " " + p.getSl();
 			_topic = p.getT();
 		}
-		
-		/**
-		 * 
-		 */
 		public void render(com.google.gwt.cell.client.Cell.Context context, ISP value, SafeHtmlBuilder sb) 
 		{
-			// TODO Auto-generated method stub
+			sb.appendHtmlConstant("<td style='font-size:95%;'>");
+			sb.appendEscaped(name);
+			sb.appendHtmlConstant("</td></tr><tr><td>");
+			sb.appendEscaped(_topic);
+			sb.appendHtmlConstant("</td></tr></table>");
 		}
 	}
+	
+	private String output = "Names\n";
 
 	private static final String directions = "Click on a project in the left panel to open it in this display.";
 	private static final int bw = 2;
 	private static final String header = "Roxbury Latin Independent Senior Project Database";
 
-	private boolean loggedIn= false;
-
+	private boolean loggedIn = false;
+	private boolean loaded = false;
+	private ArrayList<ISP> db = new ArrayList<ISP>();//array list to hold ISP objects
+	
 	private RootLayoutPanel rp = RootLayoutPanel.get();
 	private Label head = new Label();
 	private DockLayoutPanel sections = new DockLayoutPanel(Unit.PCT);//panel dividing the sorting section and the access section
@@ -76,29 +112,15 @@ public class GWTISP implements EntryPoint
 
 	//Create cell list for project list panel
 	private CellList<ISP> pList;
-
-	private ISPDB db;
 	
-	TextArea details = new TextArea();//Create text area for details
+	private TextArea details = new TextArea();//Create text area for details
 
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() 
-	{
-		if(!loggedIn) login();
-		/*
+	{	
 		Window.enableScrolling(false);
-		if(loggedIn)
-		{
-			RootPanel.get("errorLabelContainer").add(new Label("Must be on Roxbury Latin campus and connected to school wifi"));
-			return;
-		}
-		db = new ISPDB();
-		setup();
-		size();
-		home();
-		
 		Window.addResizeHandler(new ResizeHandler()
 		{
 			public void onResize(ResizeEvent event) 
@@ -106,15 +128,90 @@ public class GWTISP implements EntryPoint
 				size();
 			}
 		});
+		
+		setup();
+		size();
+		home();
+		
 		search.addClickHandler(new ClickHandler()
 		{
 			public void onClick(ClickEvent event)
 			{
 				String searchText = searchField.getText();
-				db.search(searchText);
+				rpc.search(searchText, new AsyncCallback<ArrayList<ISP>>()
+				{
+					public void onFailure(Throwable caught) 
+					{
+						caught.printStackTrace();
+					}
+
+					public void onSuccess(ArrayList<ISP> result) 
+					{
+						db = result;
+					}
+				});
 			}
 		});
-		*/
+		searchField.addKeyDownHandler(new KeyDownHandler()
+		{
+			public void onKeyDown(KeyDownEvent event) 
+			{
+				search.setEnabled(true);
+				if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER)
+				{
+					//db.search(searchField.getText());
+					//repopulate
+				}
+				if(searchField.getText() == null || searchField.getText().length() < 1)
+				{
+					search.setEnabled(false);
+				}
+			}	
+		});
+		searchField.addKeyUpHandler(new KeyUpHandler()
+		{
+			public void onKeyUp(KeyUpEvent event)
+			{
+				if(searchField.getText().length() > 0)
+				{
+					search.setEnabled(true);
+				}
+				else if(event.getNativeKeyCode() == KeyCodes.KEY_BACKSPACE && searchField.getText().length() < 1)
+				{
+					search.setEnabled(false);
+				}
+			}	
+		});
+	}
+	
+	public void loadDatabase()
+	{
+		rpc = (DBConnectionAsync) GWT.create(DBConnection.class);
+		ServiceDefTarget target = (ServiceDefTarget) rpc;
+		String moduleRelativeURL = GWT.getModuleBaseURL() + "db";
+		target.setServiceEntryPoint(moduleRelativeURL);
+		
+		rpc.loadDB(new AsyncCallback<Boolean>()
+		{
+			public void onFailure(Throwable caught) 
+			{
+				caught.printStackTrace();
+			}
+			public void onSuccess(Boolean result)
+			{
+				System.out.println("loadDB");
+				if(result)
+				{
+					System.out.println("loaded");
+					rpc.byFirst(new RPCHandler<ArrayList<ISP>>());
+				}
+				else
+				{
+					System.out.println("not loaded");
+				}
+				loaded = result;
+			}
+		});
 	}
 
 	public void setup()
@@ -174,38 +271,8 @@ public class GWTISP implements EntryPoint
 		sorting.add(year);
 		sorting.add(searchField);
 		sorting.add(search);
-		home.setEnabled(false);
+		//home.setEnabled(false);
 		search.setEnabled(false);
-		searchField.addKeyDownHandler(new KeyDownHandler()
-		{
-			public void onKeyDown(KeyDownEvent event) 
-			{
-				search.setEnabled(true);
-				if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER)
-				{
-					//db.search(searchField.getText());
-					//repopulate
-				}
-				if(searchField.getText() == null || searchField.getText().length() < 1)
-				{
-					search.setEnabled(false);
-				}
-			}	
-		});
-		searchField.addKeyUpHandler(new KeyUpHandler()
-		{
-			public void onKeyUp(KeyUpEvent event)
-			{
-				if(searchField.getText().length() > 0)
-				{
-					search.setEnabled(true);
-				}
-				else if(event.getNativeKeyCode() == KeyCodes.KEY_BACKSPACE && searchField.getText().length() < 1)
-				{
-					search.setEnabled(false);
-				}
-			}	
-		});
 
 		//Add buttons for project options to options panel
 		options.add(back);
@@ -218,9 +285,19 @@ public class GWTISP implements EntryPoint
 		details.setReadOnly(true);
 		details.setSize(display.getOffsetWidth() + "px", display.getOffsetHeight() + "px");
 		display.add(details);
-		details.setText("An east weds underneath the heel. The graffito boosts a harmless spirit. The bull quota flies around a genuine ham. The bow rocket sweeps in the movie. The award relaxes over a pending individual.");
-	
-		//fill cell list with 
+		//set up cell list
+		//pList = new CellList<ISP>(new ISPCell());
+		
+		home.addClickHandler(new HomeHandler());
+		loadDatabase();
+		
+		//fill cell list with ISPCells
+		for(ISP p : db)
+		{
+			//System.out.println(p.getSf());
+			//output += p.getSf() + "\n";
+		}
+		//details.setText(output);
 	}
 
 	public boolean login()
@@ -250,10 +327,7 @@ public class GWTISP implements EntryPoint
 		RootPanel.get("sendButtonContainer").add(loginButton);
 		RootPanel.get("responseContainer").add(responseLabel);
 		RootPanel.get("errorLabelContainer").add(errorLabel);
-		RootPanel.get().add(egg, 
-				Window.getClientWidth(), 
-				Window.getClientHeight());
-		egg.setText("Egg");
+		//RootPanel.get().add(egg, Window.getClientWidth(), Window.getClientHeight());
 		//RootPanel.get().add(new Image("https://media.licdn.com/media/p/2/000/036/32c/37bc12a.png"));
 		//egg.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 
@@ -281,8 +355,6 @@ public class GWTISP implements EntryPoint
 				loginButton.setFocus(true);
 				verifyLogin();
 			}
-
-
 			public void onKeyUp(KeyUpEvent event) 
 			{
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) 
@@ -290,8 +362,6 @@ public class GWTISP implements EntryPoint
 					verifyLogin();
 				}
 			}
-
-
 			private void verifyLogin()
 			{
 				// First, we validate the input by querying RL server
@@ -308,10 +378,8 @@ public class GWTISP implements EntryPoint
 				{
 					responseLabel.setText("Loading...");
 					loggedIn = true;
-
 				}
 			}
-
 			public void onKeyDown(KeyDownEvent event)
 			{
 				errorLabel.setText("");

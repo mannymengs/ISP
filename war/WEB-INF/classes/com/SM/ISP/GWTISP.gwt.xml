@@ -28,4 +28,7 @@
 
   <!-- allow Super Dev Mode -->
   <add-linker name="xsiframe"/>
+  
+  <servlet class="com.SM.ISP.server.ISPDB" path="/gwtisp/db"/>
+  
 </module>

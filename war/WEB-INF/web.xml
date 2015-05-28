@@ -7,13 +7,13 @@
 
   <!-- Servlets -->
   <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>com.SM.ISP.server.GreetingServiceImpl</servlet-class>
+    <servlet-name>ISPDB</servlet-name>
+    <servlet-class>com.SM.ISP.server.ISPDB</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/gwtisp/greet</url-pattern>
+    <servlet-name>ISPDB</servlet-name>
+    <url-pattern>/gwtisp/db</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->

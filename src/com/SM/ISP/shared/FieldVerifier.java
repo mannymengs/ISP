@@ -1,5 +1,4 @@
 package com.SM.ISP.shared;
-import javax.naming.*;
 
 /**
  * <p>
